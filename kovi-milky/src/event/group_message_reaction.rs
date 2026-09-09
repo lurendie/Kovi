@@ -53,6 +53,7 @@ impl Event for GroupMessageReactionEvent {
 
 impl GroupMessageReactionEvent {
     pub(crate) fn new(temp: &Value) -> Result<GroupMessageReactionEvent, EventBuildError> {
+        crate::event::expect_event_type(temp, "group_message_reaction")?;
         let event: GroupMessageReactionEvent = serde_json::from_value(temp.clone())
             .map_err(|e| EventBuildError::ParseError(e.to_string()))?;
         debug!("{event:?}");

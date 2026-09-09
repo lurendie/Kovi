@@ -37,6 +37,7 @@ impl Event for GroupNameChangeEvent {
 
 impl GroupNameChangeEvent {
     pub(crate) fn new(temp: &Value) -> Result<GroupNameChangeEvent, EventBuildError> {
+        crate::event::expect_event_type(temp, "group_name_change")?;
         let event: GroupNameChangeEvent = serde_json::from_value(temp.clone())
             .map_err(|e| EventBuildError::ParseError(e.to_string()))?;
         debug!("{event:?}");

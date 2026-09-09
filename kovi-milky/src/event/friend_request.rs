@@ -39,6 +39,7 @@ impl Event for FriendRequestEvent {
 
 impl FriendRequestEvent {
     pub(crate) fn new(temp: &Value) -> Result<FriendRequestEvent, EventBuildError> {
+        crate::event::expect_event_type(temp, "friend_request")?;
         let event: FriendRequestEvent = serde_json::from_value(temp.clone())
             .map_err(|e| EventBuildError::ParseError(e.to_string()))?;
         debug!("{event:?}");

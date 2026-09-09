@@ -39,6 +39,7 @@ impl Event for GroupMuteEvent {
 
 impl GroupMuteEvent {
     pub(crate) fn new(temp: &Value) -> Result<GroupMuteEvent, EventBuildError> {
+        crate::event::expect_event_type(temp, "group_mute")?;
         let event: GroupMuteEvent = serde_json::from_value(temp.clone())
             .map_err(|e| EventBuildError::ParseError(e.to_string()))?;
         debug!("{event:?}");

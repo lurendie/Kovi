@@ -41,6 +41,7 @@ impl Event for GroupFileUploadEvent {
 
 impl GroupFileUploadEvent {
     pub(crate) fn new(temp: &Value) -> Result<GroupFileUploadEvent, EventBuildError> {
+        crate::event::expect_event_type(temp, "group_file_upload")?;
         let event: GroupFileUploadEvent = serde_json::from_value(temp.clone())
             .map_err(|e| EventBuildError::ParseError(e.to_string()))?;
         debug!("{event:?}");

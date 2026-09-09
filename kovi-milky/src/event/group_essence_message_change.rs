@@ -39,6 +39,7 @@ impl Event for GroupEssenceMessageChangeEvent {
 
 impl GroupEssenceMessageChangeEvent {
     pub(crate) fn new(temp: &Value) -> Result<GroupEssenceMessageChangeEvent, EventBuildError> {
+        crate::event::expect_event_type(temp, "group_essence_message_change")?;
         let event: GroupEssenceMessageChangeEvent = serde_json::from_value(temp.clone())
             .map_err(|e| EventBuildError::ParseError(e.to_string()))?;
         debug!("{event:?}");

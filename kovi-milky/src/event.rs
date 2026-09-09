@@ -1,6 +1,8 @@
+use kovi::error::EventBuildError;
 use kovi::event::Event;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 pub use admin_msg_event::AdminMsgEvent;
 pub use friend_file_upload::FriendFileUploadEvent;
@@ -143,6 +145,15 @@ where
     pub time: i64,
     pub self_id: i64,
     pub data: T,
+}
+
+pub(crate) fn expect_event_type(temp: &Value, expected: &str) -> Result<(), EventBuildError> {
+    if temp.get("event_type").and_then(|v| v.as_str()) != Some(expected) {
+        return Err(EventBuildError::ParseError(format!(
+            "event_type is not {expected}"
+        )));
+    }
+    Ok(())
 }
 
 impl Event for MilkyEvent<serde_json::Value> {

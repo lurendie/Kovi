@@ -146,6 +146,7 @@ impl MsgEvent {
 
         type TempMsgEvent = MilkyEvent<TempMessageReceiveEventData>;
 
+        crate::event::expect_event_type(temp, "message_receive")?;
         let temp_msg_event: TempMsgEvent = serde_json::from_value(temp.clone())
             .map_err(|e| EventBuildError::ParseError(e.to_string()))?;
 

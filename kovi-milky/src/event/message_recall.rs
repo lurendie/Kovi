@@ -44,6 +44,7 @@ impl Event for MessageRecallEvent {
 
 impl MessageRecallEvent {
     pub(crate) fn new(temp: &Value) -> Result<MessageRecallEvent, EventBuildError> {
+        crate::event::expect_event_type(temp, "message_recall")?;
         let event: MessageRecallEvent = serde_json::from_value(temp.clone())
             .map_err(|e| EventBuildError::ParseError(e.to_string()))?;
         debug!("{event:?}");

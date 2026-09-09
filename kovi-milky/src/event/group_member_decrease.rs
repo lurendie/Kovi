@@ -38,10 +38,31 @@ impl Event for GroupMemberDecreaseEvent {
 
 impl GroupMemberDecreaseEvent {
     pub(crate) fn new(temp: &Value) -> Result<GroupMemberDecreaseEvent, EventBuildError> {
+        crate::event::expect_event_type(temp, "group_member_decrease")?;
         let event: GroupMemberDecreaseEvent = serde_json::from_value(temp.clone())
             .map_err(|e| EventBuildError::ParseError(e.to_string()))?;
         debug!("{event:?}");
 
         Ok(event)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn rejects_other_event_types() {
+        let err = GroupMemberDecreaseEvent::new(&json!({
+            "event_type": "group_member_increase",
+            "time": 1,
+            "self_id": 2,
+            "data": {
+                "group_id": 100,
+                "user_id": 200
+            }
+        }));
+        assert!(err.is_err());
     }
 }
