@@ -182,7 +182,7 @@ impl Message {
     }
 
     /// Message 解析成人类可读字符串, 会将里面的 segment 转换成 `[type]` 字符串，如： image segment 会转换成 `[image]` 字符串。
-    /// 
+    ///
     /// # 兼容性
     /// 该函数的输出格式可能会在不同版本中发生变化，不要靠此函数输出做判断，可能不同版本会改变内容。
     pub fn to_human_string(&self) -> String {
@@ -195,13 +195,6 @@ impl Message {
                         && let Some(text_str) = text_data.as_str()
                     {
                         result.push_str(text_str);
-                    }
-                }
-                "markdown" => {
-                    if let Some(content) = item.data.get("content").and_then(|v| v.as_str()) {
-                        result.push_str(content);
-                    } else {
-                        result.push_str("[markdown]");
                     }
                 }
                 _ => {
@@ -337,12 +330,14 @@ fn check_msg() {
     assert!(msg1.contains("text"));
     assert!(msg2.contains("text"));
 
-    let markdown: Message = Message::from_value(json!([
-        {
-            "type": "markdown",
-            "data": { "content": "# hi" }
-        }
-    ]))
-    .expect("Failed to parse markdown");
-    assert_eq!(markdown.to_human_string(), "# hi");
+    // 这种每家都不一样的东西, 难搞, 暂时不考虑吧
+    //
+    // let markdown: Message = Message::from_value(json!([
+    //     {
+    //         "type": "markdown",
+    //         "data": { "content": "# hi" }
+    //     }
+    // ]))
+    // .expect("Failed to parse markdown");
+    // assert_eq!(markdown.to_human_string(), "# hi");
 }
