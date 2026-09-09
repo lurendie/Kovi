@@ -61,6 +61,20 @@ impl From<KoviSegment> for Segment {
     }
 }
 
+/// 发送转发消息
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OutgoingForwardedMessage {
+    /// 发送者 QQ 号
+    pub user_id: i64,
+    /// 发送者名称
+    pub sender_name: String,
+    /// 消息 Unix 时间戳（秒）
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub time: Option<i64>,
+    /// 消息段列表
+    pub segments: MilkyMessage,
+}
+
 impl From<Vec<Segment>> for MilkyMessage {
     fn from(v: Vec<Segment>) -> Self {
         MilkyMessage(v)
@@ -190,5 +204,36 @@ impl MilkyMessage {
             Ok(segments) => Ok(MilkyMessage(segments)),
             Err(err) => Err(err),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn outgoing_forwarded_message_omits_optional_time() {
+        let msg = OutgoingForwardedMessage {
+            user_id: 1,
+            sender_name: "n".to_string(),
+            time: None,
+            segments: MilkyMessage::from("hi"),
+        };
+        let value = serde_json::to_value(&msg).expect("serialize");
+        assert!(value.get("time").is_none());
+        assert_eq!(value["user_id"], 1);
+        assert_eq!(value["sender_name"], "n");
+    }
+
+    #[test]
+    fn outgoing_forwarded_message_keeps_time() {
+        let msg = OutgoingForwardedMessage {
+            user_id: 1,
+            sender_name: "n".to_string(),
+            time: Some(123),
+            segments: MilkyMessage::from("hi"),
+        };
+        let value = serde_json::to_value(&msg).expect("serialize");
+        assert_eq!(value["time"], 123);
     }
 }

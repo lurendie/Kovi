@@ -14,7 +14,7 @@ pub use event::{
     AdminMsgEvent, FriendMsgEvent, GroupMsgEvent, MilkyEvent, MsgEvent, MsgSendFromKoviEvent,
 };
 pub use event_registrar::EventRegistrar;
-pub use milky_message::{MilkyMessage, Segment};
+pub use milky_message::{MilkyMessage, OutgoingForwardedMessage, Segment};
 
 // ── Message builder ──
 pub use message_trait::MessageRegistrar;

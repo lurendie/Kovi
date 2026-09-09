@@ -36,15 +36,31 @@ pub trait MilkyFileApi: CanSendApi {
     }
 
     /// 获取私聊文件下载链接
+    ///
+    /// 默认按非本人发送处理（`is_self_send = false`）。
+    /// 若文件由本人发送，请使用 [`Self::get_private_file_download_url_with_self_send`]。
     fn get_private_file_download_url(
         &self,
         user_id: i64,
         file_id: &str,
         file_hash: &str,
     ) -> impl std::future::Future<Output = Result<ApiReturn, ApiReturn>> {
+        self.get_private_file_download_url_with_self_send(user_id, file_id, file_hash, false)
+    }
+
+    /// 获取私聊文件下载链接
+    ///
+    /// `is_self_send` 表示文件是否由本人发送。
+    fn get_private_file_download_url_with_self_send(
+        &self,
+        user_id: i64,
+        file_id: &str,
+        file_hash: &str,
+        is_self_send: bool,
+    ) -> impl std::future::Future<Output = Result<ApiReturn, ApiReturn>> {
         let send_api = SendApi::new(
             "get_private_file_download_url",
-            json!({"user_id": user_id, "file_id": file_id, "file_hash": file_hash}),
+            json!({"user_id": user_id, "file_id": file_id, "file_hash": file_hash, "is_self_send": is_self_send}),
         );
         send_api_request_with_response(self.__get_api_tx(), send_api)
     }
@@ -109,6 +125,15 @@ pub trait MilkyFileApi: CanSendApi {
     fn delete_group_file(&self, group_id: i64, file_id: &str) {
         let send_api = SendApi::new(
             "delete_group_file",
+            json!({"group_id": group_id, "file_id": file_id}),
+        );
+        send_api_request_with_forget(self.__get_api_tx(), send_api);
+    }
+
+    /// 转存群文件为永久文件
+    fn persist_group_file(&self, group_id: i64, file_id: &str) {
+        let send_api = SendApi::new(
+            "persist_group_file",
             json!({"group_id": group_id, "file_id": file_id}),
         );
         send_api_request_with_forget(self.__get_api_tx(), send_api);
