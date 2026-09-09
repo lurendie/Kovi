@@ -2,7 +2,7 @@ plugins/
 .zed/
 .cargo/
 
-backup/
+tmp/
 
 kovi.conf.toml
 kovi.plugin.toml
